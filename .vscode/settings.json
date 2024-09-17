@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "MCHS oblast.sln"
+    "dotnet.defaultSolution": "MCHSoblast_game.sln"
 }
