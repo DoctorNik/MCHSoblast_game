@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Sphere
   m_EditorClassIdentifier: 
   Name: Sphere
-  Icon: {fileID: 21300000, guid: 4e5132416b50a8741a66e7a8f973d1ae, type: 3}
+  Icon: {fileID: 21300000, guid: 2a4c5329cbab5a34b907afa550116bcf, type: 3}
   Score: 1

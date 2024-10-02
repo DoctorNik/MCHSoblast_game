@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Empty
   m_EditorClassIdentifier: 
   Name: Empty
-  Icon: {fileID: 21300000, guid: b3df7c238b1c16f47986ea318b511e1d, type: 3}
+  Icon: {fileID: 21300000, guid: c153f60fa9d525c4a81324785b4e4e0d, type: 3}
   Score: 0
