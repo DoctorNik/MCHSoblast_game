@@ -8,10 +8,19 @@ public class Inventory : MonoBehaviour
     public Action<Item> onItemAdded;
     [SerializeField]public List<Item> inventoryItems = new List<Item>();
 
-    public void AddItem(Item item)
+    public void AddItem(Item item, int count)
     {
-        inventoryItems.Add(item);
-
+        for (int i = 0; i < count; i++)
+        {
+            if (i < inventoryItems.Count)
+            {
+                inventoryItems[i] = item;
+            }
+            else
+            {
+                break;
+            }
+        }
         onItemAdded?.Invoke(item);
     }
 }

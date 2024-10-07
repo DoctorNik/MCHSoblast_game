@@ -5,12 +5,13 @@ using UnityEngine;
 public class PickItem : MonoBehaviour
 {
     [SerializeField] Inventory target;
+    RaycastAim _aim;
+    public Item itemToAdd;
 
-    [SerializeField] private Item Sphere; 
-    [SerializeField] private Item Cube;
-    [SerializeField] private Item Cylinder;
-
-    Item itemToAdd;
+    private void Awake()
+    {
+        _aim = GetComponent<RaycastAim>();
+    }
     void Start()
     {
         itemToAdd = null;
@@ -18,21 +19,6 @@ public class PickItem : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            itemToAdd = Sphere; 
-            target.AddItem(itemToAdd); 
-        }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            itemToAdd = Cube; 
-            target.AddItem(itemToAdd); 
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            itemToAdd = Cylinder;
-            target.AddItem(itemToAdd);
-        }
     }
 }

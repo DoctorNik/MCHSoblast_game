@@ -32,18 +32,27 @@ public class RaycastAim : MonoBehaviour
             canvasComponent.ChangeAimFalse();
         }
     }
+    private void Update()
+    {
 
+    }
+    public void ReceiveItemData(Item itemData)
+    {
+        Debug.Log("Received item: " + itemData.name);
+    }
     public void CheckForPickable(RaycastHit hit)
     {
         if (hit.transform.CompareTag("Pick"))
         {
             if (!looking) 
             {
+                ItemHolder itemHolder = hit.transform.GetComponent<ItemHolder>();
                 if (canvasComponent != null)
                 {
                     canvasComponent.ChangeAimTrue();
                     Debug.Log("Pick рядом");
                 }
+                itemHolder.GiveItemDataToOtherScript(this);
                 looking = true;
             }
         }
