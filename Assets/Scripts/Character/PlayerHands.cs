@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerHands : MonoBehaviour
 {
     public ScriptableObject handObject;
-    private int pickedSlot;
+    public int pickedSlot;
     private Inventory inventory;
     public int PickedSlot
     {

@@ -44,6 +44,7 @@ public class PickSlots : MonoBehaviour
 
                     if (inventory.inventoryItems.Count >= Number) 
                     {
+                        player.pickedSlot = Number;
                         player.PickedObject(Number);
                     }
                 }
