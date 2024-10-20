@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class PickSlots : MonoBehaviour
 {
@@ -44,8 +45,9 @@ public class PickSlots : MonoBehaviour
 
                     if (inventory.inventoryItems.Count >= Number) 
                     {
+                        var item = inventory.inventoryItems[Number - 1];
                         player.pickedSlot = Number;
-                        player.PickedObject(Number);
+                        player.PickedObject(Number, item._prefab);
                     }
                 }
                 else

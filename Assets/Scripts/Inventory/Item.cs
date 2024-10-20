@@ -10,4 +10,5 @@ public class Item : ScriptableObject
     public Sprite Icon;
     public int Score = 0;
     public GameObject _prefab;
+    public bool Heavy;
 }
