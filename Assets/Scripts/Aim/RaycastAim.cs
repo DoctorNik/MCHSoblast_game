@@ -11,13 +11,16 @@ public class RaycastAim : MonoBehaviour
     public float detectionDistance = 5f;
     public LayerMask layerMask;
     public GameObject canvas;
-    private bool looking = false;
-    private bool CanPick = false;
+    public bool looking = false;
+    public bool CanPick = false;
+    public bool CanOpen = false;
     public Action<RaycastHit> OnAimHit;
     private Aim canvasComponent;
     private ScriptableObject Object;
-
+    public Chest CurrentChest;
     public event Action<ScriptableObject> OnItemPickedUp;
+    public Action<Chest> ChestOpen;
+    public Action<Chest> RedrawUpdate;
     void Start()
     {
         canvasComponent = canvas.GetComponent<Aim>();
@@ -35,6 +38,8 @@ public class RaycastAim : MonoBehaviour
         {
             looking = false;
             CanPick = false;
+            CanOpen = false;
+            CurrentChest = null;
             canvasComponent.ChangeAimFalse();
         }
     }
@@ -47,6 +52,17 @@ public class RaycastAim : MonoBehaviour
             OnItemPickedUp?.Invoke(Object);
 
             CanPick = false;
+        }
+        if(CurrentChest != null)
+        {
+            if (!CurrentChest.IsOpen &&CanOpen && Input.GetKeyDown(KeyCode.E))
+            {
+                RedrawUpdate?.Invoke(CurrentChest);
+                CurrentChest.Opening();
+                ChestOpen?.Invoke(CurrentChest);
+                Debug.Log($"Открытие {CurrentChest}");
+                CanOpen = false;
+            }
         }
     }
     public void CanDestroy()
@@ -80,6 +96,20 @@ public class RaycastAim : MonoBehaviour
                     Debug.Log("Pick рядом");
                 }
                 itemHolder.GiveItemDataToOtherScript(this);
+                looking = true;
+            }
+        }
+        else if (hit.transform.CompareTag("Chest"))
+        {
+            CanOpen = true;
+            CurrentChest = hit.transform.GetComponent<Chest>();
+            if (!looking)
+            {
+                if (canvasComponent != null)
+                {
+                    canvasComponent.ChangeAimTrue();
+                    Debug.Log("Chest рядом");
+                }
                 looking = true;
             }
         }

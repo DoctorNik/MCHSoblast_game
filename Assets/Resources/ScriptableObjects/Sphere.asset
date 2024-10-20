@@ -15,4 +15,4 @@ MonoBehaviour:
   Name: Sphere
   Icon: {fileID: 21300000, guid: 2a4c5329cbab5a34b907afa550116bcf, type: 3}
   Score: 1
-  _prefab: {fileID: 2846465927298886859, guid: a4222dff3f303a64885c983da3c6bd95, type: 3}
+  _prefab: {fileID: 4340333460211165665, guid: a4222dff3f303a64885c983da3c6bd95, type: 3}
