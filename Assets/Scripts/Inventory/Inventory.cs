@@ -16,15 +16,22 @@ public class Inventory : MonoBehaviour
     public ScriptableObject Empty;
 
     public event Action<ScriptableObject> OnItemAddTask;
+    public event Action ItemDeleted;
     public event Action<ScriptableObject> HandObject;
 
+    public List<Container> Containers;
     private void Awake()
     {
+        raycastAim.OnItemPickedUp += ItemPickedUp;
         hand = FindObjectOfType<PlayerHands>();
+        Containers = new List<Container>(FindObjectsOfType<Container>());
+        foreach (var cont in Containers)
+        {
+            cont.ContainerActivated += DeleteObject;
+        }
     }
     private void Start()
     {
-        raycastAim.OnItemPickedUp += ItemPickedUp;
         tradeItemsList = new List<TradeItems>(FindObjectsOfType<TradeItems>());
         foreach (var tradeItem in tradeItemsList)
         {
@@ -35,7 +42,7 @@ public class Inventory : MonoBehaviour
 
     private void ItemPickedUp(ScriptableObject pickedObject)
     {
-        Debug.Log("ўа добавим " + pickedObject.name + " на " + hand.pickedSlot + " €чейку");
+        //Debug.Log("ўа добавим " + pickedObject.name + " на " + hand.pickedSlot + " €чейку");
         AddItem((Item)pickedObject, hand.pickedSlot);
         var item = inventoryItems[hand.pickedSlot - 1];
         hand.itemPrefab = item._prefab;
@@ -59,6 +66,7 @@ public class Inventory : MonoBehaviour
             {
                 inventoryItems[count] = item;
                 raycastAim.CanDestroy();
+                raycastAim.RemoveObject();
                 onItemAdded?.Invoke(item);
                 OnItemAddTask?.Invoke(item);
                 HandObject?.Invoke(item);
@@ -81,6 +89,62 @@ public class Inventory : MonoBehaviour
         else
         {
             Debug.Log("Index is out of range.");
+        }
+    }
+    /*public void DropItem(int count)
+    {
+        count -= 1;
+        if (inventoryItems[count] != Empty) 
+        {
+            inventoryItems[count] = (Item)Empty; 
+        }
+        else
+        {
+            Debug.Log("ячейка пуста, нечего выбрасывать.");
+        }
+        ItemDeleted?.Invoke();
+        hand.PickedObject(count + 1, null);
+    }*/
+
+    public void DropItem(int slot)
+    {
+        slot -= 1;
+
+        if (slot >= 0 && slot < inventoryItems.Count && inventoryItems[slot] != Empty)
+        {
+            Transform playerTransform = hand.transform;
+            GameObject itemPrefab = inventoryItems[slot]._prefab;
+
+            if (itemPrefab != null)
+            {
+                Vector3 dropPosition = playerTransform.position + Vector3.down * 1f;
+                Instantiate(itemPrefab, dropPosition, Quaternion.identity);
+
+                inventoryItems[slot] = (Item)Empty;
+            }
+            ItemDeleted?.Invoke();
+            hand.PickedObject(slot + 1, null);
+        }
+        else
+        {
+            if (slot >= 0 && slot < inventoryItems.Count && inventoryItems[slot] == Empty)
+            {
+                Debug.Log("ячейка пуста, нечего выбрасывать.");
+            }
+            else
+            {
+                Debug.Log("Ќекорректна€ €чейка или еЄ индекс вне диапазона.");
+            }
+        }
+    }
+
+    private void DeleteObject(Container cont, bool MustDelete)
+    {
+        if (MustDelete)
+        {
+            inventoryItems[hand.pickedSlot - 1] = (Item)Empty;
+            ItemDeleted?.Invoke();
+            hand.PickedObject(hand.pickedSlot, null);
         }
     }
 }

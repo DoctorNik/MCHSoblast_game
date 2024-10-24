@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Pick
   - Chest
+  - Container
   layers:
   - Default
   - TransparentFX

@@ -71,20 +71,14 @@ public class ChestCanvas : MonoBehaviour
                     pickedChestSlot++;
                 }
             }
-            if (Input.anyKey || Input.GetMouseButton(0) || Input.GetMouseButton(1) ||
-                Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0)
+            if (Input.GetKey(KeyCode.Escape))
             {
-                if (!Input.GetKey(KeyCode.Q) && !Input.GetKey(KeyCode.E) && !Input.GetKey(KeyCode.F) &&
-                    !Input.GetKey(KeyCode.Alpha1) && !Input.GetKey(KeyCode.Alpha2) &&
-                    !Input.GetKey(KeyCode.Alpha3) && !Input.GetKey(KeyCode.Alpha4) &&
-                    !Input.GetKey(KeyCode.Alpha5))
-                {
-                    OpenedChest.IsOpen = false;
-                    CanvasView = false;
-                    ChestIsClose?.Invoke();
-                    raycastAim.CanOpen = false;
-                    UpdateCanvasVisibility();
-                }
+                OpenedChest.IsOpen = false;
+                CanvasView = false;
+                ChestIsClose?.Invoke();
+                raycastAim.CanOpen = false;
+                UpdateCanvasVisibility();
+                raycastAim.MustStop(false);
             }
         }
     }

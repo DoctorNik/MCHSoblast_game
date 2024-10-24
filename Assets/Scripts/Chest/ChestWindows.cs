@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,6 +38,8 @@ public class ChestWindows : MonoBehaviour
         Debug.Log("Redraw");
         ClearDrawn();
 
+        int number = 1;
+
         for (var i = 0; i < target.ChestItems.Count; i++)
         {
             var item = target.ChestItems[i];
@@ -45,6 +48,10 @@ public class ChestWindows : MonoBehaviour
             image.sprite = item.Icon;
 
             icon.transform.SetParent(chestspanel, false);
+
+            var itemIcon = icon.AddComponent<ItemChest>();
+            itemIcon.SetItem(item, target, number);
+            number ++;
 
             drawnChestIcons.Add(icon);
         }

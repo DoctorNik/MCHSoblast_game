@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class PickSlots : MonoBehaviour
 {
@@ -35,26 +36,43 @@ public class PickSlots : MonoBehaviour
 
     void Update()
     {
-        for (int i = 1; i <= 5; i++)
+        if (Input.GetKeyDown(KeyCode.G) && Number == player.pickedSlot && player.HeavyPicked)
         {
-            if (Input.GetKeyDown((KeyCode)System.Enum.Parse(typeof(KeyCode), "Alpha" + i)))
+            inventory.DropItem(player.pickedSlot);
+        }
+        if (!player.HeavyPicked)
+        {
+            for (int i = 1; i <= 5; i++)
             {
-                if (Number == i)
+                if (Input.GetKeyDown((KeyCode)System.Enum.Parse(typeof(KeyCode), "Alpha" + i)))
                 {
-                    Activate = true;
-
-                    if (inventory.inventoryItems.Count >= Number) 
+                    if (Number == i)
                     {
-                        var item = inventory.inventoryItems[Number - 1];
-                        player.pickedSlot = Number;
-                        player.PickedObject(Number, item._prefab);
+                        Activate = true;
+
+                        if (inventory.inventoryItems.Count >= Number)
+                        {
+                            TakeItem();
+                            /*var item = inventory.inventoryItems[Number - 1];
+                            player.pickedSlot = Number;
+                            player.PickedObject(Number, item._prefab);*/
+                        }
+                    }
+                    else
+                    {
+                        Activate = false;
                     }
                 }
-                else
-                {
-                    Activate = false;
-                }
             }
+        }           
+    }
+    public void TakeItem()
+    {
+        if (inventory.inventoryItems.Count >= Number)
+        {
+            var item = inventory.inventoryItems[Number - 1];
+            player.pickedSlot = Number;
+            player.PickedObject(Number, item._prefab);
         }
     }
 }

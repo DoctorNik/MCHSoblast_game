@@ -12,6 +12,7 @@ public class InventoryWindow : MonoBehaviour
     void Start()
     {
         target.onItemAdded += OnItemAdded;
+        target.ItemDeleted += Redraw;
         Redraw();
     }
 

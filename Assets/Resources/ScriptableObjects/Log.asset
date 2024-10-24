@@ -15,5 +15,5 @@ MonoBehaviour:
   Name: Log
   Icon: {fileID: 0}
   Score: 3
-  _prefab: {fileID: 0}
+  _prefab: {fileID: 2651805495676463802, guid: ace61bb4587a0134a86e4791809addea, type: 3}
   Heavy: 1

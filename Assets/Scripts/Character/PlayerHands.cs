@@ -6,13 +6,15 @@ using UnityEngine;
 
 public class PlayerHands : MonoBehaviour
 {
-    public ScriptableObject handObject;
+    public Item handObject;
     public int pickedSlot;
     private Inventory inventory;
 
     public GameObject itemPrefab; 
     private GameObject currentItem; 
-    public Transform holdPosition; 
+    public Transform holdPosition;
+
+    public bool HeavyPicked = false;
     public int PickedSlot
     {
         set {pickedSlot = value;}
@@ -22,6 +24,7 @@ public class PlayerHands : MonoBehaviour
     {
         inventory = FindObjectOfType<Inventory>();
         inventory.HandObject += GetInfo;
+        inventory.ItemDeleted += CheckHeavy;
         pickedSlot = 1;
         PickedObject(1, null);
     }
@@ -53,16 +56,47 @@ public class PlayerHands : MonoBehaviour
     }
     public void Hold()
     {
-        if (itemPrefab != null)
+        if (itemPrefab != null && !handObject.Heavy)
         {
             currentItem = Instantiate(itemPrefab, holdPosition.position, Quaternion.identity);
             currentItem.transform.parent = holdPosition;
-            currentItem.transform.localPosition = Vector3.zero;
-            currentItem.transform.localRotation = Quaternion.identity;
+
+            HoldingCoordinates holdingCoordinates = currentItem.GetComponent<HoldingCoordinates>();
+            if (holdingCoordinates != null)
+            {
+                currentItem.transform.localPosition = holdingCoordinates.positionOffset;
+                currentItem.transform.localRotation = Quaternion.Euler(holdingCoordinates.rotationOffset);
+            }
+            else
+            {
+                currentItem.transform.localPosition = Vector3.zero;
+                currentItem.transform.localRotation = Quaternion.identity;
+            }
         }
-        else
+        else if (itemPrefab != null && handObject.Heavy)
         {
-            Debug.Log("Префаб не найден");
+            currentItem = Instantiate(itemPrefab, holdPosition.position, Quaternion.identity);
+            currentItem.transform.parent = holdPosition;
+
+            HoldingCoordinates holdingCoordinates = currentItem.GetComponent<HoldingCoordinates>();
+            if (holdingCoordinates != null)
+            {
+                currentItem.transform.localPosition = holdingCoordinates.positionOffset;
+                currentItem.transform.localRotation = Quaternion.Euler(holdingCoordinates.rotationOffset);
+            }
+            else
+            {
+                currentItem.transform.localPosition = Vector3.zero;
+                currentItem.transform.localRotation = Quaternion.identity;
+            }
+            HeavyPicked = true;
+        }
+    }
+    public void CheckHeavy()
+    {
+        if (HeavyPicked)
+        {
+            HeavyPicked = false;
         }
     }
 }

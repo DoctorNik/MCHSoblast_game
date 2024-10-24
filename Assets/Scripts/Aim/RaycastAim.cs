@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,12 +17,22 @@ public class RaycastAim : MonoBehaviour
     private Aim canvasComponent;
     private ScriptableObject Object;
     public Chest CurrentChest;
+    public Container CurrentContainer;
     public event Action<ScriptableObject> OnItemPickedUp;
     public Action<Chest> ChestOpen;
     public Action<Chest> RedrawUpdate;
-    void Start()
+    public PlayerHands hand;
+    public RaycastHit obj;
+    public Action<bool> MustStop;
+
+    private void Awake()
     {
         canvasComponent = canvas.GetComponent<Aim>();
+        hand = FindObjectOfType<PlayerHands>();
+    }
+    void Start()
+    {
+        //canvasComponent = canvas.GetComponent<Aim>();
         OnAimHit += CheckForPickable;
     }
 
@@ -40,6 +49,7 @@ public class RaycastAim : MonoBehaviour
             CanPick = false;
             CanOpen = false;
             CurrentChest = null;
+            CurrentContainer = null;
             canvasComponent.ChangeAimFalse();
         }
     }
@@ -53,16 +63,21 @@ public class RaycastAim : MonoBehaviour
 
             CanPick = false;
         }
-        if(CurrentChest != null)
+        if (CurrentChest != null && !hand.HeavyPicked)
         {
-            if (!CurrentChest.IsOpen &&CanOpen && Input.GetKeyDown(KeyCode.E))
+            if (!CurrentChest.IsOpen && CanOpen && Input.GetKeyDown(KeyCode.E))
             {
                 RedrawUpdate?.Invoke(CurrentChest);
                 CurrentChest.Opening();
                 ChestOpen?.Invoke(CurrentChest);
                 Debug.Log($"Открытие {CurrentChest}");
                 CanOpen = false;
+                MustStop?.Invoke(true);
             }
+        }
+        if (CurrentContainer != null && Input.GetKeyDown(KeyCode.E) && !CurrentContainer.ContainerActivate)
+        {
+            CurrentContainer.GetObject(hand.handObject);
         }
     }
     public void CanDestroy()
@@ -94,6 +109,7 @@ public class RaycastAim : MonoBehaviour
                 {
                     canvasComponent.ChangeAimTrue();
                     Debug.Log("Pick рядом");
+                    obj = hit;
                 }
                 itemHolder.GiveItemDataToOtherScript(this);
                 looking = true;
@@ -112,6 +128,32 @@ public class RaycastAim : MonoBehaviour
                 }
                 looking = true;
             }
+        }
+        else if (hit.transform.CompareTag("Container"))
+        {
+            CurrentContainer = hit.transform.GetComponent<Container>();
+            if (!looking)
+            {
+                if (canvasComponent != null)
+                {
+                    canvasComponent.ChangeAimTrue();
+                    Debug.Log("Container рядом");
+                }
+                looking = true;
+            }
+        }
+    }
+    public void RemoveObject()
+    {
+        if (obj.transform != null) 
+        {
+            Destroy(obj.transform.gameObject); 
+            Debug.Log("Объект удалён!"); 
+            obj = new RaycastHit(); 
+        }
+        else
+        {
+            Debug.Log("Нет объекта для удаления!"); 
         }
     }
 }
