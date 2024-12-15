@@ -16,6 +16,9 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody rb;
 
     [SerializeField]public RaycastAim raycast;
+
+    [SerializeField] private State state;
+
     private bool stop;
     public bool STOP
     {
@@ -61,47 +64,23 @@ public class PlayerMovement : MonoBehaviour
     {
         if (STOP)
         {
-            moveAmount = Vector3.zero; 
+            moveAmount = Vector3.zero;
+            return;
         }
-        if (!STOP)
-        {
-            Move();
-            Look();
-        }
-        bool isMoving = Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0;
 
-        if (!moving && (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0))
+        Move();
+        Look();
+
+        bool isMoving = Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0;
+        bool isRunning = Input.GetKey(KeyCode.LeftShift) && isMoving && !Hand.HeavyPicked;
+
+        if (isMoving)
         {
-            moving = true;
-            MoveOn?.Invoke(2);
+            state.ChangeState(isRunning ? State.PlayerState.Run : State.PlayerState.Walk);
         }
-        else if (moving && (Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") == 0))
+        else
         {
-            moving = false;
-            MoveOn?.Invoke(1);
-        }
-        if (!running && Input.GetKey(KeyCode.LeftShift) && (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) && !Hand.HeavyPicked)
-        {
-            running = true;
-            RunOn?.Invoke(3); 
-        }
-        else if (running && !Input.GetKey(KeyCode.LeftShift))
-        {
-            running = false;
-            MoveOn?.Invoke(2);
-        }
-        if (running && (Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") == 0))
-        {
-            running = false;
-            RunOn?.Invoke(1);
-        }
-        if (Hand.HeavyPicked)
-        {
-            if (isMoving)
-            {
-                RunOn?.Invoke(2);
-            }
-            running = false; 
+            state.ChangeState(State.PlayerState.Calm);
         }
     }
     private void Move()

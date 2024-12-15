@@ -1,17 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static State;
 
 public class CameraShake : MonoBehaviour
 {
-    public enum CameraState
-    {
-        Calm,
-        Walk,
-        Run
-    }
-
-    [SerializeField] public PlayerMovement player;
+    [SerializeField] private State state;
 
     public float amplitude = 0.1f; 
     public float calmFrequency = 2.0f;
@@ -19,7 +13,6 @@ public class CameraShake : MonoBehaviour
     public float runFrequency = 5.0f;
 
     private Vector3 initialLocalPosition;
-    public CameraState currentState = CameraState.Calm;
 
     private float targetFrequency;
     public float smoothTime = 0.1f;
@@ -27,46 +20,33 @@ public class CameraShake : MonoBehaviour
 
     void Awake()
     {
-        player.MoveOn += ChangeState;
-        player.RunOn += ChangeState;
         initialLocalPosition = transform.localPosition;
-
+        state.OnStateChanged += UpdateFrequencyBasedOnState;
         targetFrequency = calmFrequency; 
     }
-
-    private void ChangeState(int n)
-    {
-        switch (n)
-        {
-            case 1:
-                currentState = CameraState.Calm;
-                targetFrequency = calmFrequency;
-                break;
-            case 2:
-                currentState = CameraState.Walk;
-                targetFrequency = walkFrequency;
-                break;
-            case 3:
-                currentState = CameraState.Run;
-                targetFrequency = runFrequency;
-                break;
-            default:
-                Debug.LogWarning("Неизвестное состояние: " + n);
-                break;
-        }
-    }
-
     void FixedUpdate()
     {
         UpdateShake();
     }
 
+    private void UpdateFrequencyBasedOnState(State.PlayerState newState)
+    {
+        switch (newState)
+        {
+            case State.PlayerState.Calm:
+                targetFrequency = calmFrequency;
+                break;
+            case State.PlayerState.Walk:
+                targetFrequency = walkFrequency;
+                break;
+            case State.PlayerState.Run:
+                targetFrequency = runFrequency;
+                break;
+        }
+    }
+
     void UpdateShake()
     {
-        /*float currentFrequency = Mathf.SmoothDamp(targetFrequency, targetFrequency, ref frequencyVelocity, smoothTime);
-        float y = initialHeight + Mathf.Sin(Time.time * currentFrequency) * amplitude; 
-        transform.position = new Vector3(transform.position.x, y, transform.position.z);*/
-
         float currentFrequency = Mathf.SmoothDamp(targetFrequency, targetFrequency, ref frequencyVelocity, smoothTime);
         float yOffset = Mathf.Sin(Time.time * currentFrequency) * amplitude;
         transform.localPosition = initialLocalPosition + new Vector3(0, yOffset, 0);

@@ -32,7 +32,7 @@ public class PlayerHands : MonoBehaviour
     {
         Item chosenItem = inventory.inventoryItems[n - 1];
         handObject = chosenItem;
-        Debug.Log($"Персонаж держит:{handObject}");
+        //Debug.Log($"Персонаж держит:{handObject}");
 
         if (currentItem != null)
         {
@@ -46,7 +46,7 @@ public class PlayerHands : MonoBehaviour
         else
         {
             itemPrefab = null;
-            Debug.Log("Префаб не задан.");
+            //Debug.Log("Префаб не задан.");
         }
     }
     private void GetInfo(ScriptableObject item)
